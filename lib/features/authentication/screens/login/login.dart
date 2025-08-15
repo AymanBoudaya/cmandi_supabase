@@ -5,6 +5,7 @@ import '../../../../common/styles/spacing_styles.dart';
 import '../../../../common/widgets.login_signup/form_divider.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/text_strings.dart';
+import 'widgets/login_form.dart';
 import 'widgets/login_header.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class LoginScreen extends StatelessWidget {
             TLoginHeader(),
 
             /// form
-            //const TLoginForm(),
+            const TLoginForm(),
 
             /// Divider
             TFormDivider(dividerText: TTexts.orSignInWith.capitalize!),

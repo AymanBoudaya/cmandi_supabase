@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-import '../../../shop/screens/home/home.dart';
+import '../../screens/login/login.dart';
 
 class OnBoardingController extends GetxController {
   static OnBoardingController get instance => Get.find();
@@ -22,7 +22,7 @@ class OnBoardingController extends GetxController {
   /// Update Current Index & jump to next page
   void nextPage() {
     if (currentPageIndex.value == 2) {
-      Get.to(/*LoginScreen()*/ HomeScreen());
+      Get.to(LoginScreen());
     }
     int page = currentPageIndex.value++;
     pageController.jumpToPage(page);

@@ -9,7 +9,7 @@ import 'data/repositories/authentication/authentication_repository.dart';
 
 Future<void> main() async {
   // Add Widgets Binding
-    final WidgetsBinding widgetsBinding =
+  final WidgetsBinding widgetsBinding =
       WidgetsFlutterBinding.ensureInitialized();
 // Init Local storage
   await GetStorage.init();
@@ -19,7 +19,6 @@ Future<void> main() async {
 
   // 4. Initialiser Supabase (avec gestion d'erreur)
   try {
-    
     await Supabase.initialize(
       url: 'https://yjcopixznzprehftnymq.supabase.co', // 🔹 Ton URL Supabase
       anonKey:
@@ -27,8 +26,8 @@ Future<void> main() async {
     );
 
     // 5. Injecter le repository d'authentification
-    runApp(App());
     Get.put(AuthenticationRepository());
+    runApp(App());
   } catch (e, stack) {
     debugPrint('Erreur lors de l\'initialisation de Supabase: $e');
     debugPrintStack(stackTrace: stack);
