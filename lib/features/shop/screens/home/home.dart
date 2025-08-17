@@ -1,17 +1,13 @@
 import 'package:get/get.dart';
 
-import '../../../../common/widgets/layouts/grid_layout.dart';
-import '../../../../common/widgets/products/product_cards/product_card_vertical.dart';
-import '../../../../common/widgets/shimmer/vertical_product_shimmer.dart';
 import '../../../../common/widgets/texts/section_heading.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
+import 'package:flutter/material.dart';
+import '../../../../common/widgets/custom_shapes/containers/primary_header_container.dart';
 import '../../../authentication/screens/home/widgets/home_categories.dart';
 import '../../controllers/product/product_controller.dart';
 import '../all_products/all_products.dart';
-import 'widgets/home_appbar.dart';
-import 'package:flutter/material.dart';
-import '../../../../common/widgets/custom_shapes/containers/primary_header_container.dart';
 import 'widgets/promo_slider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -19,7 +15,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final controller = Get.put(ProductController());
+    final controller = Get.put(ProductController());
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -43,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   ),
 
                   /// Categories List
-                  //THomeCategories(),
+                  THomeCategories(),
                   const SizedBox(height: AppSizes.spaceBtwItems),
                 ],
               ),
@@ -69,9 +65,9 @@ class HomeScreen extends StatelessWidget {
                     /// -- Heading
                     TSectionHeading(
                       title: 'Produits Populaires',
-                      /*onPressed: () => Get.to(() => AllProducts(
+                      onPressed: () => Get.to(() => AllProducts(
                           title: 'Produits populaires',
-                          futureMethod: controller.fetchAllFeaturedProducts())),*/
+                          futureMethod: controller.fetchAllFeaturedProducts())),
                     ),
                     const SizedBox(
                       height: AppSizes.spaceBtwItems,

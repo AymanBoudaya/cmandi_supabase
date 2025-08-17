@@ -12,7 +12,7 @@ class UserRepository extends GetxController {
   static UserRepository get instance => Get.find();
 
   final SupabaseClient _supabase = Supabase.instance.client;
-  final String _table = 'users'; // Nom de ta table Supabase
+  final String _table = 'Users'; // Nom de ta table Supabase
 
   /// Sauvegarder un nouvel utilisateur
   Future<void> saveUserRecord(UserModel user) async {

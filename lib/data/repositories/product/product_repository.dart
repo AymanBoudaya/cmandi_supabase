@@ -1,7 +1,6 @@
-import 'package:caferesto/data/upload/upload_categories.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../features/shop/models/product_model.dart';
 import '../../../utils/exceptions/platform_exceptions.dart';
@@ -10,48 +9,58 @@ import '../../upload/upload_dummy_products.dart';
 class ProductRepository extends GetxController {
   static ProductRepository get instance => Get.find();
 
-  /// Firestore instance for database interactions
-  final _db = FirebaseFirestore.instance;
+  /// Supabase client instance
+  final _db = Supabase.instance.client;
 
   /// Get limited featured products
   Future<List<ProductModel>> getFeaturedProducts() async {
     try {
-      final snapshot = await _db
-          .collection('Products')
-          .where('IsFeatured', isEqualTo: true)
+      final response = await _db
+          .from('Products')
+          .select()
+          .eq('IsFeatured', true)
           .limit(4)
-          .get();
-      return snapshot.docs.map((e) => ProductModel.fromSnapshot(e)).toList();
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+          .order('created_at', ascending: false);
+      return response.map((json) => ProductModel.fromJson(json)).toList();
+    } on PostgrestException catch (e) {
+      throw 'Database error: ${e.message}';
     } catch (e) {
-      throw 'Something went wrong! Please try again';
+      throw 'Echec de chargement des produits en vedette : ${e.toString()}';
     }
   }
 
   Future<List<ProductModel>> getAllFeaturedProducts() async {
     try {
-      final snapshot = await _db
-          .collection('Products')
-          .where('IsFeatured', isEqualTo: true)
-          .get();
-      return snapshot.docs.map((e) => ProductModel.fromSnapshot(e)).toList();
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+      final response = await _db
+          .from('Products')
+          .select()
+          .eq('IsFeatured', true)
+          .order('Title');
+      return response.map((json) => ProductModel.fromJson(json)).toList();
+    } on PostgrestException catch (e) {
+      throw 'Database error: ${e.message}';
     } catch (e) {
-      throw 'Something went wrong! Please try again';
+      throw 'Echec de chargement des produits en vedette : ${e.toString()}';
     }
   }
 
-  Future<List<ProductModel>> fetchProductsByQuery(Query query) async {
+  Future<List<ProductModel>> fetchProductsByQuery(
+      Map<String, dynamic> query) async {
     try {
-      final querySnapshot = await query.get();
-      final List<ProductModel> productList = querySnapshot.docs
-          .map((doc) => ProductModel.fromQuerySnapshot(doc))
-          .toList();
-      return productList;
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+      PostgrestFilterBuilder request = _db.from('Products').select();
+
+      query.forEach((key, value) {
+        if (value is List) {
+          request = request.inFilter(key, value);
+        } else {
+          request = request.eq(key, value);
+        }
+      });
+
+      final response = await request;
+      return response.map((json) => ProductModel.fromJson(json)).toList();
+    } on PostgrestException catch (e) {
+      throw 'Query error: ${e.message}';
     } catch (e) {
       throw 'Something went wrong! Please try again';
     }
@@ -59,38 +68,35 @@ class ProductRepository extends GetxController {
 
   Future<List<ProductModel>> getFavoriteProducts(
       List<String> productIds) async {
+    if (productIds.isEmpty) return [];
+
     try {
-      final snapshot = await _db
-          .collection('Products')
-          .where(FieldPath.documentId, whereIn: productIds)
-          .get();
-      return snapshot.docs
-          .map((querySnapshot) => ProductModel.fromSnapshot(querySnapshot))
-          .toList();
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+      final chunks = _chunkList(productIds, 100);
+      List<ProductModel> allProducts = [];
+
+      for (final chunk in chunks) {
+        final response =
+            await _db.from('Products').select().inFilter('Id', chunk);
+
+        allProducts.addAll(
+            response.map((json) => ProductModel.fromJson(json)).toList());
+      }
+      return allProducts;
+    } on PostgrestException catch (e) {
+      throw 'Database error: ${e.message}';
     } catch (e) {
-      throw 'Something went wrong! Please try again';
+      throw 'Echec de chargement des produits favoris :${e.toString()}';
     }
   }
 
   Future<List<ProductModel>> getProductsForBrand(
       {required String brandId, int limit = -1}) async {
     try {
-      final querySnapshot = limit == -1
-          ? await _db
-              .collection('Products')
-              .where('Brand.id', isEqualTo: brandId)
-              .get()
-          : await _db
-              .collection('Products')
-              .where('Brand.id', isEqualTo: brandId)
-              .limit(limit)
-              .get();
-      final products = querySnapshot.docs
-          .map((doc) => ProductModel.fromSnapshot(doc))
-          .toList();
-      return products;
+      final query =
+          _db.from('Products').select().eq('Brand.id', brandId).order('Title');
+
+      final response = limit == -1 ? await query : await query.limit(limit);
+      return response.map((json) => ProductModel.fromJson(json)).toList();
     } on PlatformException catch (e) {
       throw TPlatformException(e.code).message;
     } catch (e) {
@@ -101,29 +107,31 @@ class ProductRepository extends GetxController {
   Future<List<ProductModel>> getProductsForCategory(
       {required String categoryId, int limit = -1}) async {
     try {
-      QuerySnapshot productCategoryQuery = limit == -1
-          ? await _db
-              .collection('ProductCategory')
-              .where('categoryId', isEqualTo: categoryId)
-              .get()
-          : await _db
-              .collection('ProductCategory')
-              .where('categoryId', isEqualTo: categoryId)
-              .limit(limit)
-              .get();
-      List<String> productIds = productCategoryQuery.docs
-          .map((doc) => doc['productId'] as String)
-          .toList();
-      final productsQuery = await _db
-          .collection('Products')
-          .where(FieldPath.documentId, whereIn: productIds)
-          .get();
-      List<ProductModel> products = productsQuery.docs
-          .map((doc) => ProductModel.fromSnapshot(doc))
-          .toList();
-      return products;
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+      final productCategoryRes = await _db
+          .from('ProductCategory')
+          .select('ProductId')
+          .eq('categoryId', categoryId);
+
+      if (productCategoryRes.isEmpty) return [];
+
+      final productIds =
+          productCategoryRes.map((e) => e['ProductId'] as String).toList();
+
+      // Split into chunks
+      final chunks = _chunkList(productIds, 100);
+      List<ProductModel> products = [];
+
+      for (final chunk in chunks) {
+        final response =
+            await _db.from('Products').select().inFilter('Id', chunk);
+
+        products.addAll(
+            response.map((json) => ProductModel.fromJson(json)).toList());
+      }
+
+      return limit == -1 ? products : products.take(limit).toList();
+    } on PostgrestException catch (e) {
+      throw 'Database error: ${e.message}';
     } catch (e) {
       throw 'Something went wrong! Please try again';
     }
@@ -133,31 +141,26 @@ class ProductRepository extends GetxController {
   Future<void> uploadDummyData() async {
     try {
       final dummyProducts = StoreProducts.dummyProducts;
-      // Upload each product to Firestore
-      for (var product in dummyProducts) {
-        await _db.collection('Products').doc(product.id).set(product.toJson());
+      final chunks = _chunkList(dummyProducts, 100); // Supabase batch limit
+
+      for (final chunk in chunks) {
+        final data = chunk.map((product) => product.toJson()).toList();
+        await _db.from('Products').insert(data);
       }
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
+    } on PostgrestException catch (e) {
+      throw 'Upload failed: ${e.message}';
     } catch (e) {
       throw 'Something went wrong! Please try again.';
     }
   }
 
-  Future<void> uploadDummyCategories() async {
-    try {
-      final dummyCategories = UploadCategories.dummyCategories;
-      // Upload each product to Firestore
-      for (var category in dummyCategories) {
-        await _db
-            .collection('Categories')
-            .doc(category.id)
-            .set(category.toJson());
-      }
-    } on PlatformException catch (e) {
-      throw TPlatformException(e.code).message;
-    } catch (e) {
-      throw 'Something went wrong! Please try again.';
+  // Helper to split lists into chunks
+  List<List<T>> _chunkList<T>(List<T> list, int chunkSize) {
+    final chunks = <List<T>>[];
+    for (var i = 0; i < list.length; i += chunkSize) {
+      chunks.add(list.sublist(
+          i, i + chunkSize > list.length ? list.length : i + chunkSize));
     }
+    return chunks;
   }
 }

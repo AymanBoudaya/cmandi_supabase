@@ -11,24 +11,28 @@ class UploadCategories {
       name: 'Café',
       image: TImages.coffee,
       isFeatured: true,
+      parentId: '',
     ),
     CategoryModel(
       id: '2',
       name: 'Mlewi',
       image: TImages.mlewiCategory,
       isFeatured: true,
+      parentId: '',
     ),
     CategoryModel(
       id: '3',
       name: 'Boissons',
       image: TImages.boissonsCategory,
       isFeatured: true,
+      parentId: '',
     ),
     CategoryModel(
       id: '4',
       name: 'Petit Déjeuner',
       image: TImages.petitdej,
       isFeatured: true,
+      parentId: '',
     ),
     CategoryModel(
       id: '5',

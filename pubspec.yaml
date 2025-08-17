@@ -69,6 +69,10 @@ dependencies:
   # Supabase
   supabase_flutter: ^2.9.1
 
+flutter_native_splash:
+  color: "#42a5f5"
+  image: assets/logos/app_logo_dark.png
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

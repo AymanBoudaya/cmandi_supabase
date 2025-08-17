@@ -84,31 +84,27 @@ class ProductModel {
   }
 
   /// Convert JSON structure to model
-  factory ProductModel.fromSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> document) {
-    if (document.data() == null) {
-      return ProductModel.empty();
-    }
-    final data = document.data()!;
+  factory ProductModel.fromJson(
+      Map<String, dynamic> json) {
     return ProductModel(
-      id: document.id,
-      sku: data['SKU'] ?? '',
-      title: data['Title'] ?? '',
-      stock: data['Stock'] ?? 0,
-      price: double.parse((data['Price'] ?? 0.0).toString()),
-      thumbnail: data['Thumbnail'] ?? '',
-      brand: data['Brand'] != null ? BrandModel.fromJson(data['Brand']) : null,
-      date: data['Date'] != null ? DateTime.parse(data['Date']) : null,
-      salePrice: double.parse((data['SalePrice'] ?? 0.0).toString()),
-      isFeatured: data['IsFeatured'] ?? false,
-      categoryId: data['CategoryId'] ?? '',
-      description: data['Description'] ?? '',
-      productType: data['ProductType'] ?? '',
-      images: List<String>.from(data['Images'] ?? []),
-      productAttributes: (data['ProductAttributes'] as List?)
+      id: json['Id']?? '',
+      sku: json['SKU'] ?? '',
+      title: json['Title'] ?? '',
+      stock: json['Stock'] ?? 0,
+      price: double.parse((json['Price'] ?? 0.0).toString()),
+      thumbnail: json['Thumbnail'] ?? '',
+      brand: json['Brand'] != null ? BrandModel.fromJson(json['Brand']) : null,
+      date: json['Date'] != null ? DateTime.parse(json['Date']) : null,
+      salePrice: double.parse((json['SalePrice'] ?? 0.0).toString()),
+      isFeatured: json['IsFeatured'] ?? false,
+      categoryId: json['CategoryId'] ?? '',
+      description: json['Description'] ?? '',
+      productType: json['ProductType'] ?? '',
+      images: List<String>.from(json['Images'] ?? []),
+      productAttributes: (json['ProductAttributes'] as List?)
           ?.map((e) => ProductAttributeModel.fromJson(e))
           .toList(),
-      productVariations: (data['ProductVariations'] as List?)
+      productVariations: (json['ProductVariations'] as List?)
           ?.map((e) => ProductVariationModel.fromJson(e))
           .toList(),
     );

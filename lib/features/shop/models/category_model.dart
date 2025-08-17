@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class CategoryModel {
   String id;
   String name;
@@ -37,18 +35,16 @@ class CategoryModel {
 
   /// Map Json oriented document snapshot from firebase to UserModel
 
-  factory CategoryModel.fromSnapshot(
-      DocumentSnapshot<Map<String, dynamic>> document) {
-    if (document.data() != null) {
-      final json = document.data()!;
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    try {
       return CategoryModel(
-        id: document.id,
+        id: json['Id'].toString(),
         name: json['Name'] ?? '',
         image: json['Image'] ?? '',
         parentId: json['ParentId'] ?? '',
         isFeatured: json['IsFeatured'] ?? false,
       );
-    } else {
+    } catch (e) {
       return CategoryModel.empty();
     }
   }

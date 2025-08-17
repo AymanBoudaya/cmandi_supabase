@@ -11,6 +11,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../common/widgets/list_tiles/settings_menu_tile.dart';
 import '../../../../common/widgets/list_tiles/user_profile_tile.dart';
 import '../../../../data/repositories/authentication/authentication_repository.dart';
+import '../../../../data/repositories/categories/category_repository.dart';
 import '../../../../data/repositories/product/product_repository.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../address/address.dart';
@@ -21,6 +22,8 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = ProductRepository.instance;
+    final categoryController = CategoryRepository.instance;
+
     void uploadDummyData() async {
       try {
         await controller.uploadDummyData();
@@ -34,7 +37,7 @@ class SettingsScreen extends StatelessWidget {
 
     void uploadDummyCategories() async {
       try {
-        await controller.uploadDummyCategories();
+        await categoryController.uploadDummyCategories();
         Get.snackbar("Succès", "Catégories factices chargées avec succès",
             snackPosition: SnackPosition.BOTTOM);
       } catch (e) {
