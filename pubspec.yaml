@@ -68,6 +68,8 @@ dependencies:
 
   # Supabase
   supabase_flutter: ^2.9.1
+  #3d animation controller
+  flutter_3d_controller: ^2.0.1  # For 3D perspective effects
 
 flutter_native_splash:
   color: "#42a5f5"

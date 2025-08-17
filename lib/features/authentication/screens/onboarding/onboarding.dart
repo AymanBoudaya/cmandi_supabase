@@ -1,9 +1,10 @@
 import 'package:caferesto/features/authentication/controllers/onboarding/onboarding_controller.dart';
-import 'package:caferesto/utils/constants/image_strings.dart';
-import 'package:caferesto/utils/constants/text_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../utils/animations/depth_transformer.dart';
+import '../../../../utils/constants/image_strings.dart';
+import '../../../../utils/constants/text_strings.dart';
 import 'widgets/onboarding_dot_navigation.dart';
 import 'widgets/onboarding_next_button.dart';
 import 'widgets/onboarding_page.dart';
@@ -19,38 +20,73 @@ class OnBoardingScreen extends StatelessWidget {
       body: Stack(
         /// Horizontal Scrollable Pages
         children: [
-          PageView(
+          PageView.custom(
             controller: controller.pageController,
             onPageChanged: controller.updatePageIndicator,
-            children: [
-              const OnBoardingPage(
-                image: TImages.onBoardingImage1,
-                title: TTexts.onBoardingTitle1,
-                subTitle: TTexts.onBoardingSubTitle1,
-              ),
-              const OnBoardingPage(
-                image: TImages.onBoardingImage2,
-                title: TTexts.onBoardingTitle2,
-                subTitle: TTexts.onBoardingSubTitle2,
-              ),
-              const OnBoardingPage(
-                image: TImages.onBoardingImage3,
-                title: TTexts.onBoardingTitle3,
-                subTitle: TTexts.onBoardingSubTitle3,
-              )
-            ],
+            childrenDelegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final page = _getPage(index);
+
+                return AnimatedBuilder(
+                  animation: controller.pageController,
+                  builder: (context, child) {
+                    final position =
+                        (controller.pageController.page ?? 0) - index;
+
+                    return LiquidPageTransformer().transform(
+                        page,
+                        TransformInfo(
+                          position: position,
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                        ));
+                  },
+                );
+              },
+              childCount: 3,
+            ),
           ),
 
-          /// Skip Button
-          const OnBoardingSkip(),
-
-          // Dot navigation smoothpageindicator
-          const OnBoardingDotNavigation(),
-
-          /// Circular button
-          OnBoardingNextButton()
+          // UI Elements
+          const Positioned(
+            top: 60,
+            right: 30,
+            child: OnBoardingSkip(),
+          ),
+          const Positioned(
+            bottom: 40,
+            left: 0,
+            right: 0,
+            child: OnBoardingDotNavigation(),
+          ),
+          const Positioned(
+            bottom: 40,
+            right: 30,
+            child: OnBoardingNextButton(),
+          ),
         ],
       ),
     );
+  }
+
+  Widget _getPage(int index) {
+    final pages = [
+      const OnBoardingPage(
+        image: TImages.onBoardingImage1,
+        title: TTexts.onBoardingTitle1,
+        subTitle: TTexts.onBoardingSubTitle1,
+      ),
+      const OnBoardingPage(
+        image: TImages.onBoardingImage2,
+        title: TTexts.onBoardingTitle2,
+        subTitle: TTexts.onBoardingSubTitle2,
+      ),
+      const OnBoardingPage(
+        image: TImages.onBoardingImage3,
+        title: TTexts.onBoardingTitle3,
+        subTitle: TTexts.onBoardingSubTitle3,
+      )
+    ];
+    return pages[index];
   }
 }

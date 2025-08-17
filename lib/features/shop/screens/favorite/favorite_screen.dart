@@ -20,7 +20,7 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = FavoritesController.instance;
+   // final controller = FavoritesController.instance;
     return Scaffold(
         appBar: TAppBar(
           title: Text(
@@ -35,7 +35,8 @@ class FavoriteScreen extends StatelessWidget {
         ),
 
         /// Body
-        body: SingleChildScrollView(
+        body: const Text(
+            'Favoris') /*SingleChildScrollView(
             child: Padding(
                 padding: EdgeInsets.all(AppSizes.defaultSpace),
 
@@ -72,6 +73,7 @@ class FavoriteScreen extends StatelessWidget {
                           }),
                     )
                   ],
-                ))));
+                )))*/
+        );
   }
 }

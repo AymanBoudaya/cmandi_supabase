@@ -51,8 +51,10 @@ class UserRepository extends GetxController {
       throw const TFormatException();
     } on PlatformException catch (e) {
       throw TPlatformException(e.code).message;
-    } catch (_) {
-      throw 'Something went wrong. Please try again';
+    } catch (e, stack) {
+      print("❌ fetchUserDetails error: $e");
+      print(stack);
+      throw e; // don’t replace the error message
     }
   }
 

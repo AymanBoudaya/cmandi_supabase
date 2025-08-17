@@ -21,16 +21,18 @@ class OnBoardingController extends GetxController {
 
   /// Update Current Index & jump to next page
   void nextPage() {
-    if (currentPageIndex.value == 2) {
-      Get.to(LoginScreen());
+    if (currentPageIndex.value < 2) {
+      final nextPage = currentPageIndex.value + 1;
+      currentPageIndex.value = nextPage;
+      pageController.jumpToPage(nextPage);
+      print(nextPage);
+    } else {
+      Get.to(() => LoginScreen());
     }
-    int page = currentPageIndex.value++;
-    pageController.jumpToPage(page);
   }
 
   /// Update Current Index & jump to the last page
   void skipPage() {
-    currentPageIndex.value = 2;
-    pageController.jumpToPage(2);
+    Get.to(() => LoginScreen());
   }
 }
