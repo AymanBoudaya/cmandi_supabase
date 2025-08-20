@@ -1,18 +1,53 @@
-// gerant_model.dart
-import 'user_model.dart';
 
-class GerantModel extends UserModel {
-  // Exemple d’attributs spécifiques au gérant
-  List<String> commandesEnCours;
+/*
+import 'package:caferesto/features/personalization/models/user_model.dart';
+class Gerant extends UserModel {
+  Gerant({
+    required String id,
+    required String firstName,
+    required String lastName,
+    required String username,
+    required String email,
+    required String phoneNumber,
+    required String profilePicture,
+  }) : super(
+          id: id,
+          firstName: firstName,
+          lastName: lastName,
+          username: username,
+          email: email,
+          phoneNumber: phoneNumber,
+          profilePicture: profilePicture,
+          role: 'gerant',
+        );
 
-  GerantModel({
-    required super.id,
-    required super.firstName,
-    required super.lastName,
-    required super.username,
-    required super.email,
-    required super.phoneNumber,
-    required super.profilePicture,
-    this.commandesEnCours = const [],
-  });
+  void gererCommande() {
+    // Implement command management logic
+  }
+
+  @override
+  Map<String, dynamic> toJson() => super.toJson();
+
+  factory Gerant.fromJson(Map<String, dynamic> json) {
+    return Gerant(
+      id: json['id'] ?? '',
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      username: json['username'] ?? '',
+      email: json['email'] ?? '',
+      phoneNumber: json['phone_number'] ?? '',
+      profilePicture: json['profile_picture'] ?? '',
+    );
+  }
+
+  static Gerant empty() => Gerant(
+        id: "",
+        firstName: "",
+        lastName: "",
+        username: "",
+        email: "",
+        phoneNumber: "",
+        profilePicture: "",
+      );
 }
+*/
