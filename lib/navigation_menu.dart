@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'features/shop/controllers/navigation_controller.dart';
-import 'utils/constants/colors.dart';
 import 'utils/helpers/helper_functions.dart';
 
 class NavigationMenu extends StatelessWidget {

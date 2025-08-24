@@ -54,7 +54,7 @@ class UserRepository extends GetxController {
     } catch (e, stack) {
       print("❌ fetchUserDetails error: $e");
       print(stack);
-      throw e; // don’t replace the error message
+      rethrow; // don’t replace the error message
     }
   }
 

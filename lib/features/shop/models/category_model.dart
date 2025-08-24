@@ -6,7 +6,7 @@ class CategoryModel {
   bool isFeatured;
 
   CategoryModel({
-    required this.id,
+    this.id = '',
     required this.name,
     required this.image,
     required this.isFeatured,
@@ -16,20 +16,16 @@ class CategoryModel {
   /// Empty helper function
   static CategoryModel empty() {
     return CategoryModel(
-      id: '',
-      image: '',
-      name: '',
-      isFeatured: false,
-    );
+        id: '', image: '', name: '', isFeatured: false, parentId: '');
   }
 
   /// Convert CategoryModel to Json structure so that you can store datat in Firebase
   Map<String, dynamic> toJson() {
     return {
-      'Name': name,
-      'Image': image,
-      'ParentId': parentId,
-      'IsFeatured': isFeatured,
+      'name': name,
+      'image': image,
+      'parentId': parentId,
+      'isFeatured': isFeatured,
     };
   }
 
@@ -38,11 +34,11 @@ class CategoryModel {
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     try {
       return CategoryModel(
-        id: json['Id'].toString(),
-        name: json['Name'] ?? '',
-        image: json['Image'] ?? '',
-        parentId: json['ParentId'] ?? '',
-        isFeatured: json['IsFeatured'] ?? false,
+        id: json['id'].toString(),
+        name: json['name'],
+        image: json['image'] ?? '',
+        parentId: json['parentId'] ?? '',
+        isFeatured: json['isFeatured'] ?? false,
       );
     } catch (e) {
       return CategoryModel.empty();

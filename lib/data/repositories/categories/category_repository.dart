@@ -16,7 +16,7 @@ class CategoryRepository extends GetxController {
   Future<List<CategoryModel>> getAllCategories() async {
     try {
       final response =
-          await _db.from('Categories').select().order('name', ascending: true);
+          await _db.from('categories').select().order('name', ascending: true);
       return response
           .map((category) => CategoryModel.fromJson(category))
           .toList();
@@ -31,9 +31,9 @@ class CategoryRepository extends GetxController {
   Future<List<CategoryModel>> getSubCategories(String categoryId) async {
     try {
       final response = await _db
-          .from('Categories')
+          .from('categories')
           .select()
-          .eq('ParentId', categoryId)
+          .eq('parentId', categoryId)
           .order('name', ascending: true);
       return response
           .map((category) => CategoryModel.fromJson(category))
@@ -51,7 +51,7 @@ class CategoryRepository extends GetxController {
 
       final insertData =
           categories.map((category) => category.toJson()).toList();
-      final response = await _db.from('Categories').insert(insertData);
+      final response = await _db.from('categories').insert(insertData);
 
       if (response.error != null) {
         throw response.error!.message;
