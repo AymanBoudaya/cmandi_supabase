@@ -137,13 +137,17 @@ class StoreScreen extends StatelessWidget {
                 ];
               },
               body: TabBarView(
-                children: [
-                  Tab(child: Text("Café")),
-                  Tab(child: Text("Sandwichs")),
-                  Tab(child: Text("Pâtisseries")),
-                  Tab(child: Text("Boissons")),
-                  Tab(child: Text("Plats")),
-                ],
+                children: categories
+                    .map((category) => Tab(
+                          child: Text(
+                            category.name,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .apply(color: AppColors.primary),
+                          ),
+                        ))
+                    .toList(),
               ))),
     );
   }

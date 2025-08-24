@@ -22,7 +22,7 @@ class CategoryModel {
   /// Convert CategoryModel to Json structure so that you can store datat in Firebase
   Map<String, dynamic> toJson() {
     return {
-      'name': name,
+      'name': name.trim(),
       'image': image,
       'parentId': parentId,
       'isFeatured': isFeatured,

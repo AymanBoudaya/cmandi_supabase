@@ -1,3 +1,4 @@
+import 'package:caferesto/utils/exceptions/supabase_exception.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -56,6 +57,8 @@ class CategoryRepository extends GetxController {
       if (response.error != null) {
         throw response.error!.message;
       }
+    } on SupabaseException catch (e) {
+      throw SupabaseException(e.code).message;
     } on PostgrestException catch (e) {
       throw 'DB Error: ${e.code} - ${e.message}';
     } catch (e) {
