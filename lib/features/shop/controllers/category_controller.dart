@@ -34,10 +34,8 @@ class CategoryController extends GetxController {
 
       // Filter featured categories
       featuredCategories.assignAll(categories
-          .where((category) =>
-              category.isFeatured &&
-              (category.parentId
-                  .isEmpty)) // (partenId.isEmpty parentese) handle parentId safely (even if your model converts null to '', this is robust
+          .where((category) => category
+              .isFeatured) // (partenId.isEmpty parentese) handle parentId safely (even if your model converts null to '', this is robust
           .take(8)
           .toList());
     } catch (e) {
@@ -48,12 +46,12 @@ class CategoryController extends GetxController {
   }
 
   /// Load selected category data
-  
+
   Future<List<CategoryModel>> getSubCategories(String categoryId) async {
     try {
-
       // Fetch category data from repository
-      final subCategories = await _categoryRepository.getSubCategories(categoryId);
+      final subCategories =
+          await _categoryRepository.getSubCategories(categoryId);
       return subCategories;
     } catch (e) {
       TLoaders.errorSnackBar(title: 'Erreur', message: e.toString());
