@@ -55,7 +55,7 @@ class OnBoardingScreen extends StatelessWidget {
           ),
           const Positioned(
             bottom: 40,
-            left: 0,
+            left: 50,
             right: 0,
             child: OnBoardingDotNavigation(),
           ),

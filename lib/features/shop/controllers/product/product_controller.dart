@@ -30,6 +30,7 @@ class ProductController extends GetxController {
       final products = await productRepository.getFeaturedProducts();
       // Assign products
       featuredProducts.assignAll(products);
+      print(featuredProducts[0].id);
     } catch (e) {
       // Handle error
       TLoaders.errorSnackBar(title: 'Oh snap!', message: e.toString());

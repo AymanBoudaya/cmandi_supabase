@@ -1,5 +1,8 @@
+import 'package:caferesto/common/widgets/products/product_cards/product_card_vertical.dart';
 import 'package:get/get.dart';
 
+import '../../../../common/widgets/layouts/grid_layout.dart';
+import '../../../../common/widgets/shimmer/vertical_product_shimmer.dart';
 import '../../../../common/widgets/texts/section_heading.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
@@ -8,6 +11,7 @@ import '../../../../common/widgets/custom_shapes/containers/primary_header_conta
 import '../../../authentication/screens/home/widgets/home_categories.dart';
 import '../../controllers/product/product_controller.dart';
 import '../all_products/all_products.dart';
+import 'widgets/home_appbar.dart';
 import 'widgets/promo_slider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -26,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   /// AppBar
-                  //const THomeAppBar(),
+                  const THomeAppBar(),
                   const SizedBox(height: AppSizes.spaceBtwSections),
 
                   /// Categories
@@ -74,22 +78,22 @@ class HomeScreen extends StatelessWidget {
                     ),
 
                     /// Popular products
-                    /*Obx(() {
+                    Obx(() {
                       if (controller.isLoading.value) {
-                      return const TVerticalProductShimmer();
+                        return const TVerticalProductShimmer();
                       }
                       if (controller.featuredProducts.isEmpty) {
-                      return const Center(
-                        child: Text('Aucun produit trouvé'),
-                      );
+                        return const Center(
+                          child: Text('Aucun produit trouvé'),
+                        );
                       }
                       return GridLayout(
-                        itemCount: 4 controller.featuredProducts.length,
+                        itemCount: controller.featuredProducts.length,
                         itemBuilder: (_, index) => ProductCardVertical(
                           product: controller.featuredProducts[index],
                         ),
                       );
-                    })*/
+                    })
                   ],
                 )),
           ],

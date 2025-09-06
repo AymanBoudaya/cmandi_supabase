@@ -15,7 +15,7 @@ class BrandRepository extends GetxController {
   Future<List<BrandModel>> getAllBrands() async {
     try {
       final response = await _db
-          .from('Brands')
+          .from('brands')
           .select()
           .withConverter<List<BrandModel>>((data) {
         return data.map((e) => BrandModel.fromMap(e)).toList();
@@ -27,7 +27,8 @@ class BrandRepository extends GetxController {
     } on PostgrestException catch (e) {
       throw 'Erreur Supabase: ${e.message}';
     } catch (e) {
-      throw 'Quelque chose s\'est mal passée lors de la récupération des marques.';
+      print(e);
+      throw 'Quelque chose s\'est mal passée lors de la récupération des marques ${e}';
     }
   }
 
@@ -48,7 +49,7 @@ class BrandRepository extends GetxController {
       if (brandIds.isEmpty) return [];
 
       final response = await _db
-          .from('Brands')
+          .from('brands')
           .select()
           .inFilter('id', brandIds)
           .limit(2)

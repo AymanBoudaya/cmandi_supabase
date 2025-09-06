@@ -9,7 +9,7 @@ class BannerModel {
 
   BannerModel({
     required this.id,
-required this.name,
+    required this.name,
     required this.image,
     this.isFeatured,
     this.productsCount,
@@ -51,22 +51,21 @@ required this.name,
   }
 
   /// Map from firebase snapshot to user model
-  factory BannerModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document) {
-    if(document.data() != null) {
-    final data = document.data()!;
+  factory BannerModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    if (document.data() != null) {
+      final data = document.data()!;
 
-    // Map Json record to the Model
-    return BannerModel(
-      id: document.id,
-      name: data['Name'] ?? '',
-      image: data['Image'] ?? '',
-      productsCount: data['ProductsCount'] ?? '',
-      isFeatured: data['IsFeatured'] ?? false,
-    );
-    }
-    else {
+      // Map Json record to the Model
+      return BannerModel(
+        id: document.id,
+        name: data['Name'] ?? '',
+        image: data['Image'] ?? '',
+        productsCount: data['ProductsCount'] ?? '',
+        isFeatured: data['IsFeatured'] ?? false,
+      );
+    } else {
       return BannerModel.empty();
-
     }
   }
 }

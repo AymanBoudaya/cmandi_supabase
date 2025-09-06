@@ -6,6 +6,7 @@ import '../../../../common/widgets/products/sortable/sortable_products.dart';
 import '../../../../common/widgets/shimmer/vertical_product_shimmer.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/helpers/cloud_helper_functions.dart';
+import '../../controllers/product/all_products_controller.dart';
 import '../../models/product_model.dart';
 
 class AllProducts extends StatelessWidget {
@@ -18,7 +19,7 @@ class AllProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final controller = AllProductsController.instance;
+    final controller = AllProductsController.instance;
     return Scaffold(
       appBar: TAppBar(
         title: Text(title),

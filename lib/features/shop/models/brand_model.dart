@@ -29,7 +29,7 @@ class BrandModel {
     };
   }
 
-  /// Map from firebase to user model
+  /// Map from supabase to user model
   factory BrandModel.fromJson(Map<String, dynamic> document) {
     final data = document;
     if (data.isEmpty) {
@@ -48,13 +48,11 @@ class BrandModel {
   factory BrandModel.fromMap(Map<String, dynamic> data) {
     // Map Json record to the Model
     return BrandModel(
-      id: data['Id']?.toString() ?? '', // Adjust if UUID
-      name:
-          data['Name'] ??
-          '', // lowercase if your DB column names follow SQL conventions
-      image: data['Image'] ?? '',
-      productsCount: data['ProductsCount'] ?? '',
-      isFeatured: data['IsFeatured'] ?? false,
+      id: data['id']?.toString() ?? '', // Adjust if UUID
+      name: data['name'] ?? '',
+      image: data['image'] ?? '',
+      productsCount: data['products_count'] ?? '',
+      isFeatured: data['is_featured'] ?? false,
     );
   }
 }

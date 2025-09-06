@@ -16,9 +16,9 @@ class ProductRepository extends GetxController {
   Future<List<ProductModel>> getFeaturedProducts() async {
     try {
       final response = await _db
-          .from('Products')
-          .select()
-          .eq('IsFeatured', true)
+          .from('products')
+          .select('*, brands(*)')
+          .eq('is_featured', true)
           .limit(4)
           .order('created_at', ascending: false);
       return response.map((json) => ProductModel.fromJson(json)).toList();
@@ -32,9 +32,9 @@ class ProductRepository extends GetxController {
   Future<List<ProductModel>> getAllFeaturedProducts() async {
     try {
       final response = await _db
-          .from('Products')
-          .select()
-          .eq('IsFeatured', true)
+          .from('products')
+          .select('*, brands(*)')
+          .eq('is_featured', true)
           .order('Title');
       return response.map((json) => ProductModel.fromJson(json)).toList();
     } on PostgrestException catch (e) {
@@ -76,7 +76,7 @@ class ProductRepository extends GetxController {
 
       for (final chunk in chunks) {
         final response =
-            await _db.from('Products').select().inFilter('Id', chunk);
+            await _db.from('products').select().inFilter('id', chunk);
 
         allProducts.addAll(
             response.map((json) => ProductModel.fromJson(json)).toList());
@@ -93,7 +93,7 @@ class ProductRepository extends GetxController {
       {required String brandId, int limit = -1}) async {
     try {
       final query =
-          _db.from('Products').select().eq('Brand.id', brandId).order('Title');
+          _db.from('products').select().eq('Brand.id', brandId).order('Title');
 
       final response = limit == -1 ? await query : await query.limit(limit);
       return response.map((json) => ProductModel.fromJson(json)).toList();
@@ -145,7 +145,7 @@ class ProductRepository extends GetxController {
 
       for (final chunk in chunks) {
         final data = chunk.map((product) => product.toJson()).toList();
-        await _db.from('Products').insert(data);
+        await _db.from('products').insert(data);
       }
     } on PostgrestException catch (e) {
       throw 'Upload failed: ${e.message}';

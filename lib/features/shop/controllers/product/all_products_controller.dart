@@ -59,6 +59,6 @@ class AllProductsController extends GetxController {
 
   void assignProducts(List<ProductModel> products) {
     this.products.assignAll(products);
-    sortProducts('Nom');
+    sortProducts('title');
   }
 }
