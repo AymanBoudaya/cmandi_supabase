@@ -84,7 +84,7 @@ class ProfileScreen extends StatelessWidget {
                         onPressed: () {}),
                     TProfileMenu(
                         title: "Téléphone",
-                        value: controller.user.value.phoneNumber,
+                        value: controller.user.value.phone,
                         onPressed: () {}),
                     TProfileMenu(
                         title: "Sexe", value: "Male", onPressed: () {}),

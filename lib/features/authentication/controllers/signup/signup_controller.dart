@@ -24,8 +24,13 @@ class SignupController extends GetxController {
   final phoneNumber = TextEditingController();
   GlobalKey<FormState> signupFormKey = GlobalKey<FormState>();
 
+  final UserRepository _userRepository = UserRepository.instance;
+  bool _isProcessing = false;
+
   /// -- SIGNUP
   void signup() async {
+    if (_isProcessing) return;
+    _isProcessing = true;
     TFullScreenLoader.openLoadingDialog(
       "Nous sommes en train de traiter vos informations...",
       TImages.docerAnimation,
@@ -59,16 +64,17 @@ class SignupController extends GetxController {
         return;
       }
 
-      // 4. Register with Firebase
-      await AuthenticationRepository.instance.registerWithEmailAndPassword(
+      // 4. Register with Supabase
+      print('🔄 Début de l\'inscription...');
+
+      final AuthResponse response =
+          await AuthenticationRepository.instance.registerWithEmailAndPassword(
         email.text.trim(),
         password.text.trim(),
       );
 
       // 5. Ensure user is loaded
-      await Future.delayed(const Duration(seconds: 1));
-      //await FirebaseAuth.instance.currentUser?.reload();
-      final user = Supabase.instance.client.auth.currentUser;
+      final user = response.user;
 
       if (user == null) {
         throw Exception(
@@ -76,19 +82,23 @@ class SignupController extends GetxController {
         );
       }
 
-      // 6. Save user data to Firestore
+      print('✅ Utilisateur créé avec ID: ${user.id}');
+
+      // 6. Enregistrer les donnés utilisateurs dans la table Supabase
       final newUser = UserModel(
         id: user.id,
+        email: email.text.trim(),
+        username: username.text.trim(),
         firstName: firstName.text.trim(),
         lastName: lastName.text.trim(),
-        username: username.text.trim(),
-        email: email.text.trim(),
-        phoneNumber: phoneNumber.text.trim(),
-        profilePicture: '',
+        phone: phoneNumber.text.trim(),
+        role : 'Client',
+        profileImageUrl: '',
       );
 
-      final userRepository = Get.put(UserRepository());
-      await userRepository.saveUserRecord(newUser);
+      print('🔄 Sauvegarde des données utilisateur...');
+
+      await _userRepository.saveUserRecord(newUser);
 
       // 7. Navigate to verify email screen
       TFullScreenLoader.stopLoading();
@@ -101,7 +111,17 @@ class SignupController extends GetxController {
       Get.off(() => VerifyEmailScreen(email: email.text.trim()));
     } catch (e) {
       TFullScreenLoader.stopLoading();
+      print('❌ Erreur complète: $e');
+      // Message d'erreur plus spécifique
+      String errorMessage = 'Une erreur est survenue';
+      if (e.toString().contains('duplicate key')) {
+        errorMessage = 'Cet utilisateur existe déjà';
+      }
+
+      TLoaders.errorSnackBar(title: 'Erreur', message: errorMessage);
       TLoaders.errorSnackBar(title: 'Oh snap !', message: e.toString());
+    } finally {
+      _isProcessing = false;
     }
   }
 }

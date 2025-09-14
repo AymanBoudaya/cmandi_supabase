@@ -2,29 +2,43 @@ import 'package:caferesto/utils/formatters/formatter.dart';
 
 class UserModel {
   final String id;
+  final String email;
+  final String username;
   String firstName;
   String lastName;
-  final String username;
-  final String email;
-  String phoneNumber;
-  String profilePicture;
+  final String phone; // Changé de phoneNumber à phone
+  final String role; // Nouveau champ requis
+  final DateTime? dateOfBirth; // Nouveau champ
+  final String? sex; // Nouveau champ
+  final String? establishmentId; // Nouveau champ
+  final List<String> orderIds; // Nouveau champ
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final String? profileImageUrl; // Changé de profilePicture à profileImageUrl
 
   /// constructor for usermodel
   UserModel({
     required this.id,
+    required this.email,
+    required this.username,
     required this.firstName,
     required this.lastName,
-    required this.username,
-    required this.email,
-    required this.phoneNumber,
-    required this.profilePicture,
+    this.phone='00000000',
+    required this.role,
+    this.dateOfBirth,
+    this.sex,
+    this.establishmentId,
+    this.orderIds = const [],
+    this.createdAt,
+    this.updatedAt,
+    this.profileImageUrl,
   });
 
   /// Helper function to get the full name
   String get fullName => '$firstName $lastName';
 
   /// Helper function to format phone number
-  String get formattedPhoneNo => TFormatter.formatPhoneNumber(phoneNumber);
+  String get formattedPhoneNo => TFormatter.formatPhoneNumber(phone);
 
   /// Static function to split full name into first and last name
   static List<String> nameParts(String fullName) => fullName.split(" ");
@@ -39,40 +53,57 @@ class UserModel {
     return "cwt_$camelCaseUsername";
   }
 
-  ///Static function to create an empty user model
+  // Méthode empty
   static UserModel empty() => UserModel(
-        id: "",
-        firstName: "",
-        lastName: "",
-        username: "",
-        email: "",
-        phoneNumber: "",
-        profilePicture: "",
+        id: '',
+        email: '',
+        username: '',
+        firstName: '',
+        lastName: '',
+        role: 'Client',
       );
 
-  /// Convert Model to JSON (pour insert/update Supabase)
+  // Méthode toJson
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'email': email,
+      'username': username,
       'first_name': firstName,
       'last_name': lastName,
-      'username': username,
-      'email': email,
-      'phone_number': phoneNumber,
-      'profile_picture': profilePicture,
+      'phone': phone,
+      'role': role,
+      'date_of_birth': dateOfBirth?.toIso8601String(),
+      'sex': sex,
+      'establishment_id': establishmentId,
+      'order_ids': orderIds,
+      'profile_image_url': profileImageUrl,
     };
   }
 
-  /// Factory method from Supabase JSON
+  // Méthode fromJson
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] ?? '',
+      email: json['email'] ?? '',
+      username: json['username'] ?? '',
       firstName: json['first_name'] ?? '',
       lastName: json['last_name'] ?? '',
-      username: json['username'] ?? '',
-      email: json['email'] ?? '',
-      phoneNumber: json['phone_number'] ?? '',
-      profilePicture: json['profile_picture'] ?? '',
+      phone: json['phone'],
+      role: json['role'] ?? 'Client', // Valeur par défaut
+      dateOfBirth: json['date_of_birth'] != null 
+          ? DateTime.parse(json['date_of_birth']) 
+          : null,
+      sex: json['sex'],
+      establishmentId: json['establishment_id'],
+      orderIds: List<String>.from(json['order_ids'] ?? []),
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at']) 
+          : null,
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.parse(json['updated_at']) 
+          : null,
+      profileImageUrl: json['profile_image_url'],
     );
   }
 }

@@ -1,15 +1,17 @@
-import 'package:caferesto/data/repositories/user/user_repository.dart';
-import 'package:caferesto/features/personalization/models/user_model.dart';
-import 'package:caferesto/utils/helpers/network_manager.dart';
-import 'package:caferesto/utils/popups/loaders.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../data/repositories/authentication/authentication_repository.dart';
+import '../../../data/repositories/user/user_repository.dart';
 import '../../../utils/constants/image_strings.dart';
+import '../../../utils/helpers/network_manager.dart';
 import '../../../utils/popups/full_screen_loader.dart';
+import '../../../utils/popups/loaders.dart';
 import '../../authentication/screens/login/login.dart';
+import '../models/user_model.dart';
 
 class UserController extends GetxController {
   static UserController get instance => Get.find();
@@ -20,7 +22,7 @@ class UserController extends GetxController {
   final hidePassword = false.obs;
   final verifyEmail = TextEditingController();
   final verifyPassword = TextEditingController();
-  final userRepository = Get.put(UserRepository());
+  final userRepository = Get.find<UserRepository>();
   GlobalKey<FormState> reAuthFormKey = GlobalKey<FormState>();
 
   @override
@@ -29,7 +31,7 @@ class UserController extends GetxController {
     fetchUserRecord();
   }
 
-  /// Fetch user Record from Firestore
+  /// extraire l'utilisateur la table supabase
   Future<void> fetchUserRecord() async {
     try {
       profileLoading.value = true;
@@ -44,35 +46,36 @@ class UserController extends GetxController {
   }
 
   /// Save user Record from any registration provider
-  Future<void> saveUserRecord(UserCredential? userCredentials) async {
+  Future<void> saveUserRecord(User? supabaseUser) async {
     try {
-      if (userCredentials != null) {
-// Convert Name to First and Last Name
-        final nameParts =
-            UserModel.nameParts(userCredentials.user!.displayName ?? '');
-        final username =
-            UserModel.generateUsername(userCredentials.user!.displayName ?? '');
+      if (supabaseUser != null) {
+        // Convert Name to First and Last Name (si displayName est stocké côté Supabase metadata)
+        final displayName = supabaseUser.userMetadata?['full_name'] ?? '';
+        final nameParts = UserModel.nameParts(displayName);
+        final username = UserModel.generateUsername(displayName);
 
-        // Map data
+        // Map data (adapter selon ton modèle UserModel)
         final user = UserModel(
-          id: userCredentials.user!.uid,
-          email: userCredentials.user!.email ?? '',
-          firstName: nameParts[0],
-          lastName:
-              nameParts.length > 1 ? nameParts.sublist(1).join((' ')) : '',
+          id: supabaseUser.id,
+          email: supabaseUser.email ?? '',
+          firstName: nameParts.isNotEmpty ? nameParts[0] : '',
+          lastName: nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '',
           username: username,
-          phoneNumber: userCredentials.user!.phoneNumber ?? '',
-          profilePicture: userCredentials.user!.photoURL ?? '',
+          phone: supabaseUser.phone ?? '',
+          role: 'Client',
+          orderIds: [],
+          profileImageUrl: supabaseUser.userMetadata?['avatar_url'] ?? '',
         );
 
-        // Save data in Firestore
+        // Sauvegarde (dans Supabase table "users" au lieu de Firestore !)
         await userRepository.saveUserRecord(user);
       }
     } catch (e) {
       TLoaders.warningSnackBar(
-          title: 'Data not saved',
-          message:
-              "Something went wrong while saving your information. You can resave your data in your profile.");
+        title: 'Data not saved',
+        message:
+            "Something went wrong while saving your information. You can resave your data in your profile.",
+      );
     }
   }
 

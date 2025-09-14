@@ -3,6 +3,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app.dart';
 import 'data/repositories/authentication/authentication_repository.dart';
@@ -27,6 +28,7 @@ Future<void> main() async {
 
     // 5. Injecter le repository d'authentification
     Get.put(AuthenticationRepository());
+    usePathUrlStrategy();
     runApp(App());
   } catch (e, stack) {
     debugPrint('Erreur lors de l\'initialisation de Supabase: $e');

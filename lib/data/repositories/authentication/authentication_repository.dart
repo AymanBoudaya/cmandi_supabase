@@ -1,7 +1,3 @@
-/*
-import 'package:caferesto/utils/exceptions/firebase_auth_exceptions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-*/
 import 'package:flutter/services.dart';
 
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -14,6 +10,7 @@ import '../../../features/authentication/screens/onboarding/onboarding.dart';
 import '../../../features/authentication/screens/signup.widgets/verify_email.dart';
 import '../../../navigation_menu.dart';
 import '../../../utils/local_storage/storage_utility.dart';
+import '../user/user_repository.dart';
 
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
@@ -27,6 +24,22 @@ class AuthenticationRepository extends GetxController {
   @override
   void onReady() {
     FlutterNativeSplash.remove();
+
+    _auth.onAuthStateChange.listen((data) async {
+      final event = data.event;
+      final session = data.session;
+
+      if (event == AuthChangeEvent.signedIn && session != null) {
+        // Fetch user details here
+        final userDetails = await UserRepository.instance.fetchUserDetails();
+
+        await TLocalStorage.init(session.user.id);
+
+        Get.offAll(() => const NavigationMenu());
+      } else if (event == AuthChangeEvent.signedOut) {
+        Get.offAll(() => const LoginScreen());
+      }
+    });
     screenRedirect();
   }
 
@@ -35,6 +48,8 @@ class AuthenticationRepository extends GetxController {
 
     if (user != null) {
       if (user.emailConfirmedAt != null) {
+        final userDetails = await UserRepository.instance.fetchUserDetails();
+
         await TLocalStorage.init(user.id);
         Get.offAll(() => const NavigationMenu());
       } else {
@@ -75,7 +90,7 @@ class AuthenticationRepository extends GetxController {
       return await _auth.signUp(
         email: email,
         password: password,
-        emailRedirectTo: 'your-app-scheme://login-callback',
+        emailRedirectTo: 'io.supabase.flutterquickstart://login-callback',
       );
     } on AuthException catch (e) {
       throw e.message;
@@ -123,7 +138,7 @@ class AuthenticationRepository extends GetxController {
     try {
       await _auth.resetPasswordForEmail(
         email,
-        redirectTo: 'your-app-scheme://reset-password',
+        redirectTo: 'io.supabase.flutterquickstart://reset-password',
       );
     } on AuthException catch (e) {
       throw e.message;

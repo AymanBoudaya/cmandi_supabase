@@ -13,7 +13,7 @@ import '../../../personalization/controllers/user_controller.dart';
 
 class LoginController extends GetxController {
   static LoginController get instance => Get.find();
-  final userController = UserController.instance;
+  final userController = Get.put(UserController());
 
   /// Variables
   final rememberMe = false.obs;
@@ -57,7 +57,7 @@ class LoginController extends GetxController {
         localStorage.write('REMEMBER_ME_PASSWORD', password.text.trim());
       }
 
-      // Login user using Email and Password authentication
+      // Se connecter en utilisant la connexion par email et mot de passe
       final userCredentials = await AuthenticationRepository.instance
           .loginWithEmailAndPassword(email.text.trim(), password.text.trim());
 
